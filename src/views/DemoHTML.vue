@@ -40,7 +40,7 @@
 import emoji from "@/assets/emoji.json";
 
 export default {
-  name: "Demo-2",
+  name: "DemoHTML",
   data() {
     return {
       emoji: emoji,

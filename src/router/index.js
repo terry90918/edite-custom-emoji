@@ -11,14 +11,14 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/demo-1",
-    name: "demo-1",
-    component: () => import("../views/Demo-1.vue"),
+    path: "/demo-textarea",
+    name: "DemoTextarea",
+    component: () => import("../views/DemoTextarea.vue"),
   },
   {
-    path: "/demo-2",
-    name: "demo-2",
-    component: () => import("../views/Demo-2.vue"),
+    path: "/demo-html",
+    name: "DemoHTML",
+    component: () => import("../views/DemoHTML.vue"),
   },
 ];
 

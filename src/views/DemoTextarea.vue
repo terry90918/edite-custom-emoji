@@ -32,7 +32,7 @@
 import EditTextareaVue from "@/components/EditTextarea.vue";
 
 export default {
-  name: "AboutPage",
+  name: "DemoTextarea",
   components: {
     EditTextareaVue,
   },
