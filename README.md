@@ -1,4 +1,4 @@
-# edite-custom-emoji
+# web_edite_custom_emoji
 
 ## Project setup
 ```
