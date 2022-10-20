@@ -43,7 +43,7 @@ export default {
   name: "DemoHTML",
   data() {
     return {
-      emoji: emoji,
+      emoji,
       text: "",
       textLenth: 0,
       renderCode: "",
@@ -53,9 +53,10 @@ export default {
   methods: {
     getApi() {
       setTimeout(() => {
-        this.text = "Test :moneymouthface: Test Test :moneywithwings: Test";
+        this.text =
+          "Test :5ac1bfd5040ab15980c9b435-001: Test Test :5ac1bfd5040ab15980c9b435-002: Test";
         this.renderHtml = this.replaceEmojiToHtml(this.text);
-      }, 0.5);
+      }, 100);
     },
     getTextLength(str) {
       let text = "";
@@ -70,7 +71,9 @@ export default {
     },
     replaceEmojiToHtml(str) {
       return str.replace(/:([a-zA-Z0-9]+-[a-zA-Z0-9]+):/gm, ($1, $2) => {
-        return `<img data-stringify-emoji="${$1}" src="${this.emojis[$2]}"/>`;
+        return `<img data-stringify-emoji="${$1}" src="${
+          this.emoji[`(${$2})`]["base64_img"]
+        }"/>`;
       });
     },
     replaceHtmlToEmjio(str) {
