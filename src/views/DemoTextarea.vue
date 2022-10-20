@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="demo-textarea">
     <h1>This is an about page</h1>
     <div>Message <button @click="setMsg">setMsg</button></div>
     <h2>List</h2>

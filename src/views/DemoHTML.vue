@@ -1,16 +1,19 @@
 <template>
-  <div class="demo-2">
-    <div>Demo 2</div>
-    <div>Data: {{ text }}</div>
+  <div class="demo-html">
+    <div>demo html</div>
+    <div>data: {{ text }}</div>
     <hr />
     <button @click="getApi">get api</button>
     <hr />
     <div>
-      <button v-for="i in emoji" :key="`${i.product_id}-${i.emoji_id}`">
+      <button
+        v-for="i in emoji"
+        :key="`${i.product_id}-${i.emoji_id}`"
+        @click="setEmoji(i)"
+      >
         <img
           :src="i.base64_img"
           :data-stringify-emoji="`:${i.product_id}-${i.emoji_id}:`"
-          @click="setEmoji(i)"
         />
       </button>
     </div>
@@ -19,11 +22,14 @@
       <div
         class="input-panel"
         ref="msgInputContainer"
-        placeholder="輸入點什麼😆"
+        placeholder="靈魂登出"
         contenteditable="true"
         spellcheck="false"
         v-html="renderHtml"
-        @input="keydownD"
+        @input="keydown"
+        @copy="copy"
+        @cut="cut"
+        @paste="paste"
       />
       <div>{{ textLenth }}/100</div>
     </div>
@@ -44,39 +50,92 @@ export default {
   data() {
     return {
       emoji,
-      text: "",
-      textLenth: 0,
       renderCode: "",
       renderHtml: "",
+      text: "",
+      textLenth: 0,
     };
   },
   methods: {
+    /**
+     * 複製事件
+     * @param {Object} e - ClipboardEvent 修改剪貼簿相關的事件
+     */
+    copy(e = {}) {
+      e.preventDefault();
+      const clipboardData = e.clipboardData || window.clipboardData;
+      if (!clipboardData) return;
+      const text = window.getSelection().toString();
+      if (text) {
+        clipboardData.setData("text/plain", text);
+      }
+    },
+    /**
+     * 剪輯事件
+     * @param {Object} e - ClipboardEvent 修改剪貼簿相關的事件
+     */
+    cut(e) {
+      e.preventDefault();
+      const selection = window.getSelection();
+      const text = selection.toString();
+      selection.deleteFromDocument();
+      e.clipboardData.setData("text/plain", text);
+    },
+    /**
+     * 呼叫 API
+     */
     getApi() {
       setTimeout(() => {
         this.text =
           "Test :5ac1bfd5040ab15980c9b435-001: Test Test :5ac1bfd5040ab15980c9b435-002: Test";
         this.renderHtml = this.replaceEmojiToHtml(this.text);
+        this.renderCode = this.replaceHtmlToEmjio(this.renderHtml);
+        this.textLenth = this.getTextLength(this.renderCode);
       }, 100);
     },
-    getTextLength(str) {
+    /**
+     * 獲取游標位置
+     */
+    getCursorPosition() {},
+    /**
+     * 取得欄位字數
+     */
+    getTextLength(str = "") {
       let text = "";
       text = str.replace(/:([a-zA-Z_]+):/gm, () => {
         return ``;
       });
       return text.length;
     },
-    keydownD() {
+    keydown() {
       const html = this.$refs.msgInputContainer.getInnerHTML();
       this.getTextLength(html);
     },
-    replaceEmojiToHtml(str) {
+    /**
+     * 貼上事件
+     * @param {Object} e - ClipboardEvent 修改剪貼簿相關的事件
+     */
+    paste(e) {
+      e.preventDefault();
+      let paste = (e.clipboardData || window.clipboardData).getData("text");
+      const selection = window.getSelection();
+      if (!selection.rangeCount) return;
+      selection.deleteFromDocument();
+      selection.getRangeAt(0).insertNode(document.createTextNode(paste));
+    },
+    postApi() {
+      this.renderHtml = this.$refs.msgInputContainer.getInnerHTML();
+      this.renderCode = this.replaceHtmlToEmjio(this.renderHtml);
+      this.textLenth = this.getTextLength(this.renderCode);
+    },
+    replaceEmojiToHtml(str = "") {
       return str.replace(/:([a-zA-Z0-9]+-[a-zA-Z0-9]+):/gm, ($1, $2) => {
         return `<img data-stringify-emoji="${$1}" src="${
           this.emoji[`(${$2})`]["base64_img"]
         }"/>`;
       });
     },
-    replaceHtmlToEmjio(str) {
+    replaceHtmlToEmjio(str = "") {
       return str.replace(/<img[^>]*>/gm, ($1) => {
         let arr = [];
         let t = "";
@@ -85,37 +144,26 @@ export default {
         return t;
       });
     },
-    setEmoji(i) {
+    setEmoji(i = {}) {
       // 如果輸入框沒有焦點，那麼讓它獲取焦點
       if (this.$refs.msgInputContainer !== document.activeElement) {
         this.$refs.msgInputContainer.focus();
       }
 
       // 往焦點出插入內容
-      let key = `${i.product_id}-${i.emoji_id}`;
-      let img = `<img src="${i.base64_img}" data-stringify-emoji=":${key}:">`;
-      document.execCommand("insertHtml", false, img);
-    },
-    postApi() {
-      this.renderHtml = this.$refs.msgInputContainer.getInnerHTML();
-      this.renderCode = this.replaceHtmlToEmjio(this.renderHtml);
-      this.textLenth = this.getTextLength(this.renderCode);
+      const key = `${i.product_id}-${i.emoji_id}`;
+      const src = i.base64_img;
+      const emoji = `<img src="${src}" data-stringify-emoji=":${key}:">`;
+      document.execCommand("insertHtml", false, emoji);
     },
   },
 };
 </script>
 
 <style>
-.demo-2 {
+.demo-html {
   text-align: initial;
 }
-
-/* emoji */
-img[data-stringify-emoji] {
-  width: 22px;
-  height: 22px;
-}
-/* End emoji */
 
 /* input */
 .input-part {
@@ -142,4 +190,11 @@ img[data-stringify-emoji] {
   background-color: transparent;
 }
 /* End input */
+
+/* emoji */
+img[data-stringify-emoji] {
+  width: 22px;
+  height: 22px;
+}
+/* End emoji */
 </style>
