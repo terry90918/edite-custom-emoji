@@ -102,14 +102,15 @@ export default {
      */
     getTextLength(str = "") {
       let text = "";
-      text = str.replace(/:([a-zA-Z_]+):/gm, () => {
+      text = str.replace(/:([a-zA-Z0-9]+-[a-zA-Z0-9]+):/gm, () => {
         return ``;
       });
       return text.length;
     },
     keydown() {
       const html = this.$refs.msgInputContainer.getInnerHTML();
-      this.getTextLength(html);
+      this.renderCode = this.replaceHtmlToEmjio(html);
+      this.textLenth = this.getTextLength(this.renderCode);
     },
     /**
      * 貼上事件
