@@ -131,9 +131,10 @@ export default {
     },
     replaceEmojiToHtml(str = "") {
       return str.replace(/:([a-zA-Z0-9]+-[a-zA-Z0-9]+):/gm, ($1, $2) => {
-        return `<img data-stringify-emoji="${$1}" src="${
-          this.emoji[`(${$2})`]["base64_img"]
-        }"/>`;
+        const key = $1;
+        const src = this.emoji[`(${$2})`]["base64_img"];
+        const emoji = `<img data-stringify-emoji="${key}" src="${src}"/>`;
+        return emoji;
       });
     },
     replaceHtmlToEmjio(str = "") {
@@ -154,7 +155,7 @@ export default {
       // 往焦點出插入內容
       const key = `${i.product_id}-${i.emoji_id}`;
       const src = i.base64_img;
-      const emoji = `<img src="${src}" data-stringify-emoji=":${key}:">`;
+      const emoji = `<img data-stringify-emoji=":${key}:" src="${src}">`;
       document.execCommand("insertHtml", false, emoji);
     },
   },
